@@ -1,5 +1,7 @@
 package com.example.todoappfirebase.fragments
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -43,10 +45,12 @@ class ToDoDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         if (arguments != null) {
             toDoData = ToDoData(
                 arguments?.getString("taskId").toString(),
-                arguments?.getString("task").toString()
+                arguments?.getString("task").toString(),
+                false
             )
             binding.todoEt.setText(toDoData?.task)
         }
@@ -55,12 +59,14 @@ class ToDoDialogFragment : DialogFragment() {
 
     private fun registerEvents() {
         binding.todoNextBtn.setOnClickListener {
-            val todoTask = binding.todoEt.text.toString().trim()
-            if (todoTask.isNotEmpty()) {
+            val todoTaskValue = binding.todoEt.text.toString().trim()
+            if (todoTaskValue.isNotEmpty()) {
+
                 if (toDoData == null) {
+                    val todoTask = ToDoData(task = todoTaskValue)
                     listener.onSaveTast(todoTask, binding.todoEt)
                 } else {
-                    toDoData?.task = todoTask
+                    toDoData?.task = todoTaskValue
                     listener.onUpdateTask(toDoData!!, binding.todoEt)
                 }
             } else {
@@ -74,7 +80,7 @@ class ToDoDialogFragment : DialogFragment() {
     }
 
     interface DialogNextBtnClickListener {
-        fun onSaveTast(todo: String, todoEt: TextInputEditText)
+        fun onSaveTast(todo: ToDoData, todoEt: TextInputEditText)
         fun onUpdateTask(todoData: ToDoData, todoEt: TextInputEditText)
     }
 

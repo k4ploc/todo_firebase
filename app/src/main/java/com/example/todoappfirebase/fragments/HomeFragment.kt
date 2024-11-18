@@ -53,9 +53,14 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
         databaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 mList.clear()
+                println("DATA: " + snapshot.children)
                 for (taskSnaphot in snapshot.children) {
+                    println("TODO: " + taskSnaphot.key)
                     val todoTask = taskSnaphot.key?.let {
-                        ToDoData(it, taskSnaphot.value.toString())
+                        val task: String = taskSnaphot.child("task").value.toString()
+                        val completed: Boolean = taskSnaphot.child("completed").value as Boolean
+
+                        ToDoData(it, task, completed)
                     }
                     if (todoTask != null) {
                         mList.add(todoTask)
@@ -101,7 +106,7 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
 
     }
 
-    override fun onSaveTast(todo: String, todoEt: TextInputEditText) {
+    override fun onSaveTast(todo: ToDoData, todoEt: TextInputEditText) {
         databaseRef.push().setValue(todo).addOnCompleteListener {
             if (it.isSuccessful) {
                 Toast.makeText(context, "Todo saved successfully", Toast.LENGTH_SHORT).show()
@@ -119,7 +124,12 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
         todoEt: TextInputEditText
     ) {
         val map = HashMap<String, Any>()
-        map[todoData.taskId] = todoData.task
+        val taskUpdated = HashMap<String, Any>()
+        taskUpdated.put("task", todoData.task)
+        taskUpdated.put("completed", true);
+        map[todoData.taskId.toString()] = taskUpdated
+
+        //map[todoData.taskId.toString()] = todoData.task
         databaseRef.updateChildren(map).addOnCompleteListener {
             if (it.isSuccessful) {
                 Toast.makeText(context, "task updated successfully", Toast.LENGTH_SHORT).show()
@@ -132,7 +142,7 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
     }
 
     override fun onDeleteTaskBtnClicked(toDoData: ToDoData) {
-        databaseRef.child(toDoData.taskId).removeValue().addOnCompleteListener {
+        databaseRef.child(toDoData.taskId.toString()).removeValue().addOnCompleteListener {
             if (it.isSuccessful) {
                 Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_SHORT).show()
 
@@ -147,7 +157,7 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
         if (popUpFragment != null)
             childFragmentManager.beginTransaction().remove(popUpFragment!!).commit()
 
-        popUpFragment = ToDoDialogFragment.newInstance(toDoData.taskId, toDoData.task)
+        popUpFragment = ToDoDialogFragment.newInstance(toDoData.taskId.toString(), toDoData.task)
         popUpFragment!!.setListener(this)
         popUpFragment!!.show(
             childFragmentManager,
