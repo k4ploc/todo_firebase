@@ -16,7 +16,7 @@ local.properties
 *.keystore
 
 # Archivos de Gradle
-.gradle/
+../.gradle/
 build/
 *.jar
 *.war

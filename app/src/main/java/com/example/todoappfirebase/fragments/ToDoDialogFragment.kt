@@ -3,20 +3,23 @@ package com.example.todoappfirebase.fragments
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.example.todoappfirebase.databinding.FragmentAddTodoPopupBinding
+import com.example.todoappfirebase.utils.model.PriorityTodo
 import com.example.todoappfirebase.utils.model.ToDoData
+import com.example.todoappfirebase.utils.model.TodoUpdateRequest
 import com.google.android.material.textfield.TextInputEditText
 
 class ToDoDialogFragment : DialogFragment() {
 
     private lateinit var binding: FragmentAddTodoPopupBinding
     private lateinit var listener: DialogNextBtnClickListener
-    private var toDoData: ToDoData? = null
+    private var toDoUpdateRequest: TodoUpdateRequest? = null
 
     fun setListener(listener: DialogNextBtnClickListener) {
         this.listener = listener
@@ -26,10 +29,11 @@ class ToDoDialogFragment : DialogFragment() {
         const val TAG = "AddTodoPopUpFragment"
 
         @JvmStatic
-        fun newInstance(taskId: String, task: String) = ToDoDialogFragment().apply {
+        fun newInstance(id: Int, name: String) = ToDoDialogFragment().apply {
+            Log.i(TAG, id.toString() + " " + name)
             arguments = Bundle().apply {
-                putString("taskId", taskId)
-                putString("task", task)
+                putInt("id", id)
+                putString("name", name)
             }
         }
     }
@@ -47,12 +51,14 @@ class ToDoDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         if (arguments != null) {
-            /*toDoData = ToDoData(
-                arguments?.getString("taskId").toString(),
-                arguments?.getString("task").toString(),
-                false
+            toDoUpdateRequest = TodoUpdateRequest(
+                arguments?.getInt("id")!!,
+                arguments?.getString("name").toString(),
+                "0",
+                PriorityTodo.NORMAL
             )
-            binding.todoEt.setText(toDoData?.task)*/
+            Log.i(TAG, toDoUpdateRequest.toString())
+            binding.todoEt.setText(toDoUpdateRequest?.name)
         }
         registerEvents()
     }
@@ -62,7 +68,7 @@ class ToDoDialogFragment : DialogFragment() {
             val todoTaskValue = binding.todoEt.text.toString().trim()
             if (todoTaskValue.isNotEmpty()) {
 
-                if (toDoData == null) {
+                if (toDoUpdateRequest == null) {
                     val todoTask = ToDoData(
                         id = 0,
                         name = todoTaskValue,
@@ -73,8 +79,8 @@ class ToDoDialogFragment : DialogFragment() {
                     )
                     listener.onSaveTast(todoTask, binding.todoEt)
                 } else {
-                    //  toDoData?.task = todoTaskValue
-                    //  listener.onUpdateTask(toDoData!!, binding.todoEt)
+                    toDoUpdateRequest?.name = todoTaskValue
+                    listener.onUpdateTask(toDoUpdateRequest!!, binding.todoEt)
                 }
             } else {
                 Toast.makeText(context, "Please type some task", Toast.LENGTH_SHORT).show()
@@ -88,7 +94,7 @@ class ToDoDialogFragment : DialogFragment() {
 
     interface DialogNextBtnClickListener {
         fun onSaveTast(todo: ToDoData, todoEt: TextInputEditText)
-        fun onUpdateTask(todoData: ToDoData, todoEt: TextInputEditText)
+        fun onUpdateTask(todoData: TodoUpdateRequest, todoEt: TextInputEditText)
     }
 
 

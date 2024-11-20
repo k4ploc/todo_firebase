@@ -16,13 +16,10 @@ import com.example.todoappfirebase.ui.viewmodel.TodoViewModel
 import com.example.todoappfirebase.utils.adapter.TaskAdapter
 import com.example.todoappfirebase.utils.adapter.TaskAdapter.TodoAdapterClicksInterface
 import com.example.todoappfirebase.utils.model.ToDoData
+import com.example.todoappfirebase.utils.model.TodoUpdateRequest
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -143,7 +140,7 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
     }
 
     override fun onUpdateTask(
-        todoData: ToDoData,
+        todoUpdateRequest: TodoUpdateRequest,
         todoEt: TextInputEditText
     ) {
         /*val map = HashMap<String, Any>()
@@ -162,6 +159,13 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
             todoEt.text = null
             popUpFragment!!.dismiss()
         }*/
+        mList.clear()
+
+        todoViewModel.updateTodo(todoUpdateRequest)
+        Toast.makeText(context, "Todo updated successfully", Toast.LENGTH_SHORT).show()
+
+        todoEt.text = null
+        popUpFragment!!.dismiss()
     }
 
     override fun onDeleteTaskBtnClicked(toDoData: ToDoData) {
@@ -180,7 +184,7 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
         if (popUpFragment != null)
             childFragmentManager.beginTransaction().remove(popUpFragment!!).commit()
 
-        // popUpFragment = ToDoDialogFragment.newInstance(toDoData.taskId.toString(), toDoData.task)
+        popUpFragment = ToDoDialogFragment.newInstance(toDoData.id, toDoData.name)
         popUpFragment!!.setListener(this)
         popUpFragment!!.show(
             childFragmentManager,

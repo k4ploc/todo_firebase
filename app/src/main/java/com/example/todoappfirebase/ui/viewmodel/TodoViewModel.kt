@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoappfirebase.todo.TodoRepository
 import com.example.todoappfirebase.utils.model.ToDoData
+import com.example.todoappfirebase.utils.model.TodoUpdateRequest
 import kotlinx.coroutines.launch
 
 class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
@@ -36,6 +37,22 @@ class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 repository.addTodo(newTodo)
+
+                _isTodoAdded.value = true
+                _todos.value = emptyList()
+
+                fetchTodos() // Actualiza la lista después de agregar
+            } catch (e: Exception) {
+                _isTodoAdded.value = false
+                _error.value = e.message
+            }
+        }
+    }
+
+    fun updateTodo(todoUpdateRequest: TodoUpdateRequest) {
+        viewModelScope.launch {
+            try {
+                repository.updateTodo(todoUpdateRequest)
 
                 _isTodoAdded.value = true
                 _todos.value = emptyList()
