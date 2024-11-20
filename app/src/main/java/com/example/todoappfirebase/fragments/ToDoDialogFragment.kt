@@ -47,12 +47,12 @@ class ToDoDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         if (arguments != null) {
-            toDoData = ToDoData(
+            /*toDoData = ToDoData(
                 arguments?.getString("taskId").toString(),
                 arguments?.getString("task").toString(),
                 false
             )
-            binding.todoEt.setText(toDoData?.task)
+            binding.todoEt.setText(toDoData?.task)*/
         }
         registerEvents()
     }
@@ -63,11 +63,18 @@ class ToDoDialogFragment : DialogFragment() {
             if (todoTaskValue.isNotEmpty()) {
 
                 if (toDoData == null) {
-                    val todoTask = ToDoData(task = todoTaskValue)
+                    val todoTask = ToDoData(
+                        id = 0,
+                        name = todoTaskValue,
+                        quantity = "1",
+                        priority = "NORMAL",
+                        status = "ACTIVE",
+                        date = System.currentTimeMillis().toString()
+                    )
                     listener.onSaveTast(todoTask, binding.todoEt)
                 } else {
-                    toDoData?.task = todoTaskValue
-                    listener.onUpdateTask(toDoData!!, binding.todoEt)
+                    //  toDoData?.task = todoTaskValue
+                    //  listener.onUpdateTask(toDoData!!, binding.todoEt)
                 }
             } else {
                 Toast.makeText(context, "Please type some task", Toast.LENGTH_SHORT).show()

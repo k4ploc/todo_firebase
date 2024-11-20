@@ -1,6 +1,7 @@
 package com.example.todoappfirebase.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.todoappfirebase.databinding.FragmentHomeBinding
 import com.example.todoappfirebase.fragments.ToDoDialogFragment.DialogNextBtnClickListener
+import com.example.todoappfirebase.ui.viewmodel.TodoViewModel
 import com.example.todoappfirebase.utils.adapter.TaskAdapter
 import com.example.todoappfirebase.utils.adapter.TaskAdapter.TodoAdapterClicksInterface
 import com.example.todoappfirebase.utils.model.ToDoData
@@ -21,10 +23,12 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksInterface {
 
+    private val todoViewModel: TodoViewModel by viewModel()
     private lateinit var auth: FirebaseAuth
     private lateinit var databaseRef: DatabaseReference
     private lateinit var navController: NavController
@@ -45,8 +49,21 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init(view)
-        getDataFromFirebase()
+        //getDataFromFirebase()
+        //getDataFromServer()
+        observeTodos()
+        todoViewModel.fetchTodos()
         registerEvents()
+    }
+
+    private fun observeTodos() {
+        mList.clear()
+        todoViewModel.todos.observe(viewLifecycleOwner) { todos ->
+            Log.i("OBSERVED_TODOS", todos.toString())
+            mList.addAll(todos)
+            adapter.notifyDataSetChanged()
+        }
+
     }
 
     private fun getDataFromFirebase() {
@@ -60,10 +77,10 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
                         val task: String = taskSnaphot.child("task").value.toString()
                         val completed: Boolean = taskSnaphot.child("completed").value as Boolean
 
-                        ToDoData(it, task, completed)
+                        //   ToDoData(it, task, completed)
                     }
                     if (todoTask != null) {
-                        mList.add(todoTask)
+                        //  mList.add(todoTask)
                     }
                 }
                 adapter.notifyDataSetChanged()
@@ -107,7 +124,7 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
     }
 
     override fun onSaveTast(todo: ToDoData, todoEt: TextInputEditText) {
-        databaseRef.push().setValue(todo).addOnCompleteListener {
+        /*databaseRef.push().setValue(todo).addOnCompleteListener {
             if (it.isSuccessful) {
                 Toast.makeText(context, "Todo saved successfully", Toast.LENGTH_SHORT).show()
                 todoEt.text = null
@@ -116,14 +133,20 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
                 Toast.makeText(context, it.exception?.message, Toast.LENGTH_SHORT).show()
             }
             popUpFragment!!.dismiss()
-        }
+        }*/
+        mList.clear()
+        todoViewModel.addTodo(todo)
+        Toast.makeText(context, "Todo saved successfully", Toast.LENGTH_SHORT).show()
+        todoEt.text = null
+
+        popUpFragment!!.dismiss()
     }
 
     override fun onUpdateTask(
         todoData: ToDoData,
         todoEt: TextInputEditText
     ) {
-        val map = HashMap<String, Any>()
+        /*val map = HashMap<String, Any>()
         val taskUpdated = HashMap<String, Any>()
         taskUpdated.put("task", todoData.task)
         taskUpdated.put("completed", true);
@@ -138,26 +161,26 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
             }
             todoEt.text = null
             popUpFragment!!.dismiss()
-        }
+        }*/
     }
 
     override fun onDeleteTaskBtnClicked(toDoData: ToDoData) {
-        databaseRef.child(toDoData.taskId.toString()).removeValue().addOnCompleteListener {
-            if (it.isSuccessful) {
-                Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_SHORT).show()
+        /* databaseRef.child(toDoData.taskId.toString()).removeValue().addOnCompleteListener {
+             if (it.isSuccessful) {
+                 Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_SHORT).show()
 
-            } else {
-                Toast.makeText(context, it.exception?.message, Toast.LENGTH_SHORT).show()
+             } else {
+                 Toast.makeText(context, it.exception?.message, Toast.LENGTH_SHORT).show()
 
-            }
-        }
+             }
+         }*/
     }
 
     override fun onEditTaskBtnClicked(toDoData: ToDoData) {
         if (popUpFragment != null)
             childFragmentManager.beginTransaction().remove(popUpFragment!!).commit()
 
-        popUpFragment = ToDoDialogFragment.newInstance(toDoData.taskId.toString(), toDoData.task)
+        // popUpFragment = ToDoDialogFragment.newInstance(toDoData.taskId.toString(), toDoData.task)
         popUpFragment!!.setListener(this)
         popUpFragment!!.show(
             childFragmentManager,
