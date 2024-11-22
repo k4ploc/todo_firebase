@@ -25,10 +25,8 @@ class TaskAdapter(private val list: MutableList<ToDoData>) : RecyclerView.Adapte
         position: Int
     ) {
         with(holder) {
-            //  Log.i("ListSize:", list.size.toString())
-
             with(list[position]) {
-                binding.todoTask.text = this.name
+                binding.todoTask.text = this.task
                 binding.deleteTask.setOnClickListener {
                     listener?.onDeleteTaskBtnClicked(this)
                 }
