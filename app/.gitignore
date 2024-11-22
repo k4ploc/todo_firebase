@@ -1,1 +1,81 @@
-/build
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos y carpetas de Android Studio
+.idea/
+.gradle/
+*.iml
+build/
+captures/
+.externalNativeBuild/
+
+# Archivos de configuración personal
+local.properties
+*.log
+*.keystore
+
+# Archivos de Gradle
+../.gradle/
+build/
+*.jar
+*.war
+*.ear
+
+# Archivos de caché de Gradle
+**/build/
+.gradle/
+gradle-app.setting
+
+# Caché de compilación de Kotlin
+*.kotlin_module
+
+# Salidas de compilación de C/C++
+**/cmake-build-debug/
+.externalNativeBuild/
+
+# Archivos de empaquetado
+*.apk
+*.ap_
+*.aab
+
+# Archivo de empaquetado de la Play Store
+outputs/
+
+# Archivos de Android Lint
+lint/outputs/
+lint/reports/
+
+# Configuraciones locales y temporales
+local.properties
+*.log
+tmp/
+
+# Archivos de Proguard y R8
+proguard/
+
+# Configuración de SDK
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+
+# Archivos relacionados con la indexación de Gradle
+.idea/gradle.xml
+.idea/vcs.xml
+
+# Cache del navegador
+.idea/httpRequests
+
+# Archivos para CI/CD
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Firebase
+google-services.json
+
+# Otros
+*.orig
+*.lock
