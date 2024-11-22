@@ -178,13 +178,18 @@ class HomeFragment : Fragment(), DialogNextBtnClickListener, TodoAdapterClicksIn
 
              }
          }*/
+
+        mList.clear()
+        todoViewModel.deleteTodo(toDoData.id)
+        Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_SHORT).show()
     }
 
     override fun onEditTaskBtnClicked(toDoData: ToDoData) {
         if (popUpFragment != null)
             childFragmentManager.beginTransaction().remove(popUpFragment!!).commit()
 
-        popUpFragment = ToDoDialogFragment.newInstance(toDoData.id, toDoData.name)
+        popUpFragment =
+            ToDoDialogFragment.newInstance(toDoData.id, toDoData.name, toDoData.quantity, toDoData.priority.name)
         popUpFragment!!.setListener(this)
         popUpFragment!!.show(
             childFragmentManager,

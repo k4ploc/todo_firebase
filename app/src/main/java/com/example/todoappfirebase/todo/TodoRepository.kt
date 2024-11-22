@@ -7,5 +7,6 @@ interface TodoRepository {
     suspend fun fetchTodos(): List<ToDoData>?
     suspend fun addTodo(todo: ToDoData): Unit?
     suspend fun updateTodo(todo: TodoUpdateRequest): Unit?
+    suspend fun deleteTodo(id: Int): Unit?
 
 }

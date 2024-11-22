@@ -7,7 +7,7 @@ data class ToDoData(
     @SerializedName("id") val id: Int,
     @SerializedName("name") var name: String,
     @SerializedName("quantity") val quantity: String,
-    @SerializedName("priority") val priority: String,
+    @SerializedName("priority") val priority: PriorityTodo,
     @SerializedName("status") val status: String,
     @SerializedName("date") val date: String
 )

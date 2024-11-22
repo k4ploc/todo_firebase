@@ -27,7 +27,14 @@ class TodoRepositoryImpl(private val todoApi: TodoApi) : TodoRepository {
     override suspend fun updateTodo(todoUpdated: TodoUpdateRequest) {
         val response = todoApi.updateTodo(todoUpdated)
         if (!response.isSuccessful) {
-            throw Exception("Error al agregar el todo: ${response.message()}")
+            throw Exception("Error al actualizar el todo: ${response.message()}")
+        }
+    }
+
+    override suspend fun deleteTodo(id: Int) {
+        val response = todoApi.deteleTodo(id)
+        if (!response.isSuccessful) {
+            throw Exception("Error al eliminar el todo: ${response.message()}")
         }
     }
 }

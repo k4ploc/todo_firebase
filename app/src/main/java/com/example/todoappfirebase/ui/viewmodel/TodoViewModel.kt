@@ -64,4 +64,20 @@ class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
             }
         }
     }
+
+    fun deleteTodo(id: Int) {
+        viewModelScope.launch {
+            try {
+                repository.deleteTodo(id)
+
+                _isTodoAdded.value = true
+                _todos.value = emptyList()
+
+                fetchTodos() // Actualiza la lista después de agregar
+            } catch (e: Exception) {
+                _isTodoAdded.value = false
+                _error.value = e.message
+            }
+        }
+    }
 }
