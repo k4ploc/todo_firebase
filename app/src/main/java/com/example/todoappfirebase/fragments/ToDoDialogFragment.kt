@@ -56,13 +56,16 @@ class ToDoDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         if (arguments != null) {
+            val priority = getPriority(arguments?.getString("priority").toString())
+
             Log.e(TAG, arguments?.getString("priority").toString())
             toDoUpdateRequest = TodoUpdateRequest(
                 arguments?.getInt("id")!!,
                 arguments?.getString("name").toString(),
                 arguments?.getString("quantity").toString(),
-                getPriority(arguments?.getString("priority").toString())!!
+                priority!!
             )
+            prioridadSeleccionada = priority
             Log.i(TAG, toDoUpdateRequest.toString())
             binding.todoEt.setText(toDoUpdateRequest?.name)
             binding.todoQuantityEt.setText(toDoUpdateRequest?.quantity)
